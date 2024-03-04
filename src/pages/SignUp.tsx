@@ -19,7 +19,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { registrRequest } from "../api/authApi";
 import { CircularProgress } from "@mui/material";
-// import GoogleIcon from "@mui/icons-material/Google";
+import GoogleIcon from "@mui/icons-material/Google";
 
 const DEF_SIGNUP_PARAMS = { email: "", name: "", password: "" };
 
@@ -87,14 +87,12 @@ export default function SignUp() {
     }
   };
 
-  // const googleAuth = () => {
-  //   const serverUrl = process.env.SERVER_DOMAIN || 'http://localhost:3005';
+  const googleAuth = () => {
+    const serverUrl = process.env.SERVER_DOMAIN || 'http://localhost:3005';
 
-  // 	window.open(
-  // 		`${serverUrl}/auth/google/callback`,
-  // 		"_self"
-  // 	);
-  // };
+    window.open(`${serverUrl}/auth/google/callback`, '_self');
+    // window.location.href = `${serverUrl}/auth/google`;
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -210,24 +208,22 @@ export default function SignUp() {
             </Grid>
           </Box>
 
-          {/* <Typography component="h1" variant="h6" sx={{ my: 2 }}>
+          <Typography component="h1" variant="h6" sx={{ my: 2 }}>
             {"or"}
           </Typography>
 
           <Button
             onClick={googleAuth}
             disabled={isLoading || isSuccess}
-            // color={isSuccess ? "success" : "primary"}
             color="info"
-            // type="submit"
             fullWidth
             variant="contained"
             size="large"
             sx={{ mt: 3, mb: 2 }}
           >
             <GoogleIcon sx={{ mr: 2 }} />
-А            {"Sing up with Google"}
-          </Button> */}
+            {"Sing up with Google"}
+          </Button>
         </Box>
       </Container>
     </ThemeProvider>
