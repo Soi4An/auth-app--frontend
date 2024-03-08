@@ -1,31 +1,31 @@
-import { useState } from "react";
-import { setUser } from "../utils/redux/userSlice";
-import { useAppDispatch, useAppSelector } from "../utils/redux/store";
-import { validationErrors } from "../utils/validationErrors";
-import { changeName } from "../api/userApi";
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { setUser } from '../utils/redux/userSlice';
+import { useAppDispatch, useAppSelector } from '../utils/redux/store';
+import { validationErrors } from '../utils/validationErrors';
+import { changeName } from '../api/userApi';
+import { Link } from 'react-router-dom';
 
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { CircularProgress, TextField } from "@mui/material";
-import { ChangeParamsError, ChangeParamsSuccess } from "../config";
-import { useClearUser } from "../utils/useClearUser";
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { CircularProgress, TextField } from '@mui/material';
+import { ChangeParamsError, ChangeParamsSuccess } from '../config';
+import { useClearUser } from '../utils/useClearUser';
 
-const steps = ["Enter a new name"];
+const steps = ['Enter a new name'];
 
 export default function ChangeNamePage() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [errorValidate, setErrorValidate] = useState<string | null>(null);
   const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-  const clearUser = useClearUser();
+  const clearAll = useClearUser();
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -63,7 +63,7 @@ export default function ChangeNamePage() {
         }
       })
       .catch((err) =>
-        err.response?.status === 401 ? clearUser() : setIsError(true)
+        err.response?.status === 401 ? clearAll() : setIsError(true)
       )
       .finally(() => setIsLoading(false));
   };
@@ -95,9 +95,9 @@ export default function ChangeNamePage() {
               <TextField
                 error={!!errorValidate}
                 required
-                id={errorValidate ? "outlined-error" : "new name"}
+                id={errorValidate ? 'outlined-error' : 'new name'}
                 name="name"
-                label={errorValidate ? errorValidate : "New name"}
+                label={errorValidate ? errorValidate : 'New name'}
                 autoComplete="family-name"
                 variant="standard"
                 fullWidth
@@ -106,13 +106,13 @@ export default function ChangeNamePage() {
                 onChange={(e) => handlerChange(e)}
               />
 
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button component={Link} to="/profile" sx={{ mt: 3, ml: 1 }}>
                   Back
                 </Button>
 
                 <Button variant="contained" type="submit" sx={{ mt: 3, ml: 1 }}>
-                  {"Change name"}
+                  {'Change name'}
                 </Button>
               </Box>
             </Box>
@@ -121,19 +121,19 @@ export default function ChangeNamePage() {
           {activeStep === steps.length && (
             <>
               {isLoading ? (
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                   <CircularProgress color="primary" sx={{ mt: 3 }} />
                 </Box>
               ) : (
                 <>
                   <Typography variant="h5" gutterBottom sx={{ mt: 6 }}>
-                    {isError ? "Error" : "Success"}
+                    {isError ? 'Error' : 'Success'}
                   </Typography>
                   <Typography variant="subtitle1">
-                    {isError ? ChangeParamsError : ChangeParamsSuccess("name")}
+                    {isError ? ChangeParamsError : ChangeParamsSuccess('name')}
                   </Typography>
 
-                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     {!isError && (
                       <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
                         Back
@@ -146,7 +146,7 @@ export default function ChangeNamePage() {
                       to="/profile"
                       sx={{ mt: 3, ml: 1 }}
                     >
-                      {"Return to profile"}
+                      {'Return to profile'}
                     </Button>
                   </Box>
                 </>

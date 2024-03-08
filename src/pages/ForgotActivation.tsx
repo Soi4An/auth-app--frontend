@@ -1,26 +1,26 @@
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import CachedIcon from "@mui/icons-material/Cached";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import CachedIcon from '@mui/icons-material/Cached';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
 import {
   ChangePasswordError,
   ChangePasswordParams,
-} from "../types/ChangePassword";
-import { validateChangePasswordParams } from "../utils/validatations";
-import { useNavigate, useParams } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
-import FlowAlert from "../components/FlowAlert";
-import { AlertMessageError } from "../config";
-import { forgotActivate } from "../api/authApi";
+} from '../types/ChangePassword';
+import { validateChangePasswordParams } from '../utils/validatations';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
+import { CircularProgress, Grid, Link } from '@mui/material';
+import FlowAlert from '../components/FlowAlert';
+import { forgotActivate } from '../api/authApi';
+import { Status } from '../types/Status';
 
 const defaultTheme = createTheme();
-const DEF_PARAMS = { password: "", confirmation: "" };
+const DEF_PARAMS = { password: '', confirmation: '' };
 
 type Params = {
   requestWay: string;
@@ -31,8 +31,7 @@ function ForgotActivation({ requestWay }: Params) {
     useState<ChangePasswordParams>(DEF_PARAMS);
   const [errorValidate, setErrorValidate] =
     useState<ChangePasswordError | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [status, setStatus] = useState<Status | null>(null);
 
   const navigate = useNavigate();
   const { activetionToken } = useParams();
@@ -60,8 +59,7 @@ function ForgotActivation({ requestWay }: Params) {
     }
 
     if (activetionToken) {
-      setIsLoading(true);
-      setIsError(false);
+      setStatus(Status.Loading);
 
       const requestData = {
         way: requestWay,
@@ -70,9 +68,11 @@ function ForgotActivation({ requestWay }: Params) {
       };
 
       forgotActivate(requestData)
-        .then(() => navigate("/success-reset"))
-        .catch(() => setIsError(true))
-        .finally(() => setIsLoading(false));
+        .then(() => {
+          setStatus(null);
+          navigate('/success-reset');
+        })
+        .catch(() => setStatus(Status.Error));
     }
   };
 
@@ -83,18 +83,17 @@ function ForgotActivation({ requestWay }: Params) {
         <Box
           sx={{
             marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
           <FlowAlert
-            type={"error"}
-            setClose={setIsError}
-            message={isError && !isLoading ? AlertMessageError : ""}
+            type={status === Status.Error ? status : null}
+            setClose={setStatus}
           />
 
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <CachedIcon />
           </Avatar>
 
@@ -111,9 +110,9 @@ function ForgotActivation({ requestWay }: Params) {
             <TextField
               error={!!errPass}
               required
-              id={errPass ? "outlined-error" : "password"}
+              id={errPass ? 'outlined-error' : 'password'}
               name="password"
-              label={errPass ? errPass : "New password"}
+              label={errPass ? errPass : 'New password'}
               variant="standard"
               type="password"
               autoComplete="new-password"
@@ -126,9 +125,9 @@ function ForgotActivation({ requestWay }: Params) {
             <TextField
               error={!!errCofig}
               required
-              id={errCofig ? "outlined-error" : "confirmation"}
+              id={errCofig ? 'outlined-error' : 'confirmation'}
               name="confirmation"
-              label={errCofig ? errCofig : "Confirmation"}
+              label={errCofig ? errCofig : 'Confirmation'}
               variant="standard"
               type="password"
               autoComplete="new-password"
@@ -138,32 +137,33 @@ function ForgotActivation({ requestWay }: Params) {
             />
 
             <Button
-              disabled={isLoading}
-              // color="primary"
+              disabled={status === Status.Loading}
               type="submit"
               fullWidth
               variant="contained"
               size="large"
               sx={{ mt: 3, mb: 2 }}
             >
-              {isLoading ? (
+              {status === Status.Loading ? (
                 <CircularProgress color="primary" size={26} />
               ) : (
-                "Change password"
+                'Change password'
               )}
             </Button>
 
-            {/* <Grid container justifyContent="flex-end">
+            <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link
                   variant="body2"
-                  component={isLoading ? Typography : RouterLink}
+                  component={
+                    status === Status.Loading ? Typography : RouterLink
+                  }
                   to="/login"
                 >
-                  {"Return to Sign in"}
+                  {'Return to Sign in'}
                 </Link>
               </Grid>
-            </Grid> */}
+            </Grid>
           </Box>
         </Box>
       </Container>

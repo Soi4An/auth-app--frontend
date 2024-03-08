@@ -1,9 +1,9 @@
-import Alert from "@mui/material/Alert";
-import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link as RouterLink } from "react-router-dom";
-import Button from "@mui/material/Button";
-import { AlertTypes } from "../types/AlertTypes";
+import Alert from '@mui/material/Alert';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Link as RouterLink } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import { AlertTypes } from '../types/AlertTypes';
 
 const defaultTheme = createTheme();
 

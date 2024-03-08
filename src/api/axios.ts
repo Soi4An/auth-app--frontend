@@ -15,7 +15,6 @@ export function createClient(extraUrl?: string) {
 export const authClient = createClient();
 // authClient.interceptors.response.use(res => res.data);
 
-
 export const userClient = createClient('/user');
 
 userClient.interceptors.request.use(onRequest);
@@ -40,55 +39,15 @@ async function onResponseError(error: AxiosError) {
   }
 
   if (originalRequest) {
-    try {
-      const res = await refresh();
-  
-      accessTokenService.save(res.data.accessToken);
-  
-      return userClient.request(originalRequest);
-    } catch (error) {
-      throw error;
-    }
+    const res = await refresh().catch((err) => {
+      console.log(err);
+      throw err;
+    });
+
+    accessTokenService.save(res.data.accessToken);
+
+    return userClient.request(originalRequest);
   }
 
   throw error;
 }
-
-// ----------------------------------------------------------
-
-// async function makeRequest<T>(
-//   url: string,
-//   method: string,
-//   data: any = null,
-//   params: any = null
-// ): Promise<T> {
-//   const requestUrl = process.env.SERVER_DOMAIN + url;
-//   const accessToken = localStorage.getItem('accessToken');
-
-//   if (accessToken) {
-//     axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-//   }
-//   // InternalAxiosRequestConfig
-//   const config: AxiosRequestConfig = {
-//     method,
-//     url: params ? requestUrl : `${requestUrl}?${new URLSearchParams(params)}`,
-//     data,
-//   };
-
-//   try {
-//     const response: AxiosResponse<T> = await axios(config);
-//     return response.data;
-//   } catch (error) {
-//     if ((error as AxiosError)?.response?.status === 401) {
-//       // Обробити статус-код 401 тут, наприклад, спробувати оновити токен
-//       console.log('Статус-код 401. Спробуйте оновити токен або взяти інші заходи');
-//     }
-//     throw error;
-//   }
-// }
-
-// export const client = {
-//   get: <T>(url: string, params: any = null): Promise<T> => makeRequest(url, 'GET', null, params),
-//   post: <T>(url: string, data: any = null): Promise<T> => makeRequest(url, 'POST', data),
-//   patch: <T>(url: string, data: any = null): Promise<T> => makeRequest(url, 'PATCH', data),
-// };

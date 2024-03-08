@@ -1,23 +1,21 @@
-import React from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import ForgotActivation from "./pages/ForgotActivation";
-import Forgot from "./pages/Forgot";
-import SignUpActivation from "./pages/SignUpActivation";
-import { ACTIVATION_ACCOUNT_WAY, ACTIVATION_PASSWORD_WAY } from "./config";
-import AccountPage from "./pages/AccountPage";
-import ChangeNamePage from "./pages/ChangeNamePage";
-import ChangeEmailPage from "./pages/ChangeEmailPage";
-import ChangePasswordPage from "./pages/ChangePasswordPage";
-import AlertWithLink from "./pages/AlertWithLink";
-import { RequireAuth } from "./components/RequireAuth";
-import { AlertTypes } from "./types/AlertTypes";
+import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import ForgotActivation from './pages/ForgotActivation';
+import Forgot from './pages/Forgot';
+import SignUpActivation from './pages/SignUpActivation';
+import { ACTIVATION_ACCOUNT_WAY, ACTIVATION_PASSWORD_WAY } from './config';
+import AccountPage from './pages/AccountPage';
+import ChangeNamePage from './pages/ChangeNamePage';
+import ChangeEmailPage from './pages/ChangeEmailPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
+import AlertWithLink from './pages/AlertWithLink';
+import { RequireAuth } from './components/RequireAuth';
+import { AlertTypes } from './types/AlertTypes';
 
 function App() {
-  // const location = useLocation();
-
   return (
     <div>
       <Routes>
@@ -50,7 +48,6 @@ function App() {
             }
           />
 
-          {/* <Route path="/" element={<RequireAuth key={location.pathname}/>}> */}
           <Route path="/" element={<RequireAuth />}>
             <Route path="profile">
               <Route index element={<AccountPage />} />

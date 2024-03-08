@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { AlertMessageError } from "../config";
-import { confirmPassword } from "../api/userApi";
-import FlowAlert from "./FlowAlert";
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { confirmPassword } from '../api/userApi';
+import FlowAlert from './FlowAlert';
+import { Link } from 'react-router-dom';
 
 import {
   Box,
@@ -11,45 +10,46 @@ import {
   Input,
   TextField,
   Typography,
-} from "@mui/material";
-import { useClearUser } from "../utils/useClearUser";
-import { useAppSelector } from "../utils/redux/store";
+} from '@mui/material';
+import { useClearUser } from '../utils/useClearUser';
+import { useAppSelector } from '../utils/redux/store';
+import { Status } from '../types/Status';
 
 type Params = {
   stepIncrease: () => void;
 };
 
 function ChangeEmailPass({ stepIncrease }: Params) {
-  const [password, setPassword] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
-  const clearUser = useClearUser();
+  const [password, setPassword] = useState<string>('');
+  const [status, setStatus] = useState<Status | null>(null);
   const { user } = useAppSelector((state) => state.user);
+  const clearAll = useClearUser();
 
   const handlerSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setIsLoading(true);
-    setIsError(false);
+    setStatus(Status.Loading);
 
     confirmPassword({ password })
-      .then(stepIncrease)
-      .catch((err) =>
-        err.response?.status === 401 ? clearUser() : setIsError(true)
-      )
-      .finally(() => setIsLoading(false));
+      .then(() => {
+        stepIncrease();
+        setStatus(null);
+      })
+      .catch((err) => err.response?.status === 401
+        ? clearAll()
+        : setStatus(Status.Error)
+      );
   };
 
   return (
     <Box component="form" onSubmit={handlerSubmit} noValidate>
       <FlowAlert
-        type={"error"}
-        setClose={setIsError}
-        message={isError && !isLoading ? AlertMessageError : ""}
+        type={status === Status.Error ? status : null}
+        setClose={setStatus}
       />
 
       <Typography variant="h6" gutterBottom>
-        {"Confirm password of your account"}
+        {'Confirm password of your account'}
       </Typography>
 
       <Input
@@ -57,7 +57,7 @@ function ChangeEmailPass({ stepIncrease }: Params) {
         name="email"
         value={user?.email}
         autoComplete="username"
-        sx={{ display: "none" }}
+        sx={{ display: 'none' }}
       />
 
       <TextField
@@ -74,9 +74,9 @@ function ChangeEmailPass({ stepIncrease }: Params) {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
-          disabled={isLoading}
+          disabled={status === Status.Loading}
           component={Link}
           to="/profile"
           sx={{ mt: 3, ml: 1 }}
@@ -85,14 +85,17 @@ function ChangeEmailPass({ stepIncrease }: Params) {
         </Button>
 
         <Button
-          disabled={isLoading}
+          disabled={status === Status.Loading}
           variant="contained"
           size="medium"
           type="submit"
-          // onClick={handleNext}
           sx={{ mt: 3, ml: 1 }}
         >
-          {isLoading ? <CircularProgress color="primary" size={24} /> : "Next"}
+          {status === Status.Loading ? (
+            <CircularProgress color="primary" size={24} />
+          ) : (
+            'Next'
+          )}
         </Button>
       </Box>
     </Box>

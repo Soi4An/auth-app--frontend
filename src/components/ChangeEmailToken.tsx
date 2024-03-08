@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 type Params = {
   confirmation: string;
@@ -18,11 +18,11 @@ function ChangeEmailToken({
     event.preventDefault();
     stepIncrease();
   };
-  
+
   return (
     <Box component="form" onSubmit={handlerSubmit} noValidate>
       <Typography variant="h6" gutterBottom>
-        {"Insert confirmation code from your mail"}
+        {'Insert confirmation code from your mail'}
       </Typography>
 
       <TextField
@@ -38,13 +38,13 @@ function ChangeEmailToken({
         onChange={(e) => setConfirmation(e.target.value)}
       />
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button onClick={stepDecrease} sx={{ mt: 3, ml: 1 }}>
           Back
         </Button>
 
         <Button variant="contained" type="submit" sx={{ mt: 3, ml: 1 }}>
-          {"Change email"}
+          {'Change email'}
         </Button>
       </Box>
     </Box>

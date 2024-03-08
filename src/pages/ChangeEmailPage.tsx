@@ -1,35 +1,35 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../utils/redux/store";
-import { activationEmail } from "../api/userApi";
-import { setUser } from "../utils/redux/userSlice";
-import { ChangeParamsError, ChangeParamsSuccess } from "../config";
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../utils/redux/store';
+import { activationEmail } from '../api/userApi';
+import { setUser } from '../utils/redux/userSlice';
+import { ChangeParamsError, ChangeParamsSuccess } from '../config';
 
-import ChangeEmailPass from "../components/ChangeEmailPass";
-import ChangeEmailEmail from "../components/ChangeEmailEmail";
-import ChangeEmailToken from "../components/ChangeEmailToken";
+import ChangeEmailPass from '../components/ChangeEmailPass';
+import ChangeEmailEmail from '../components/ChangeEmailEmail';
+import ChangeEmailToken from '../components/ChangeEmailToken';
 
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { CircularProgress, Step, StepLabel, Stepper } from "@mui/material";
-import { useClearUser } from "../utils/useClearUser";
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { CircularProgress, Step, StepLabel, Stepper } from '@mui/material';
+import { useClearUser } from '../utils/useClearUser';
 
-const steps = ["Confirm password", "Enter new email", "Confirm new email"];
+const steps = ['Confirm password', 'Enter new email', 'Confirm new email'];
 
 export default function ChangeEmailPage() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [newEmail, setNewEmail] = useState<string>("");
-  const [confirmation, setConfirmation] = useState<string>("");
+  const [newEmail, setNewEmail] = useState<string>('');
+  const [confirmation, setConfirmation] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
 
   const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-  const clearUser = useClearUser();
+  const clearAll = useClearUser();
 
   const stepIncrease = useCallback(() => setActiveStep((curr) => curr + 1), []);
   const stepDecrease = useCallback(() => setActiveStep((curr) => curr - 1), []);
@@ -46,7 +46,7 @@ export default function ChangeEmailPage() {
           }
         })
         .catch((err) =>
-          err.response?.status === 401 ? clearUser() : setIsError(true)
+          err.response?.status === 401 ? clearAll() : setIsError(true)
         )
         .finally(() => setIsLoading(false));
     }
@@ -91,26 +91,26 @@ export default function ChangeEmailPage() {
           {activeStep === steps.length && (
             <>
               {isLoading ? (
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                   <CircularProgress color="primary" sx={{ mt: 3 }} />
                 </Box>
               ) : (
                 <>
                   <Typography variant="h5" gutterBottom>
-                    {isError ? "Error" : "Success"}
+                    {isError ? 'Error' : 'Success'}
                   </Typography>
                   <Typography variant="subtitle1">
-                    {isError ? ChangeParamsError : ChangeParamsSuccess("email")}
+                    {isError ? ChangeParamsError : ChangeParamsSuccess('email')}
                   </Typography>
 
-                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button
                       variant="contained"
                       component={Link}
                       to="/profile"
                       sx={{ mt: 3, ml: 1 }}
                     >
-                      {"Return to profile"}
+                      {'Return to profile'}
                     </Button>
                   </Box>
                 </>
