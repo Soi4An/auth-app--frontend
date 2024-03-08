@@ -1,15 +1,17 @@
-import { authClient } from "./axios";
-import { ActivateAccountResponse, ForgotActivateParams } from "../types/authApi";
-import { SignUpParams } from "../types/SignUp";
-import { SignInParams } from "../types/SignIn";
+import { authClient } from './axios';
+import { SignUpParams } from '../types/SignUp';
+import { SignInParams } from '../types/SignIn';
+import {
+  ActivateAccountResponse, ForgotActivateParams,
+} from '../types/authApi';
 
 export const refresh = () => {
   return authClient.get<ActivateAccountResponse>('/refresh');
 };
 
-export const checkRefresh = () => {
-  return authClient.get<{ isValid: boolean }>('/check');
-};
+// export const checkRefresh = () => {
+//   return authClient.get<{ isValid: boolean }>('/check');
+// };
 
 export const registrRequest = (data: SignUpParams) => {
   return authClient.post('/register', data);
@@ -20,7 +22,7 @@ export const registrActivate = (way: string, token: string) => {
 };
 
 export const forgot = (data: { email: string }) => {
-  return authClient.post(`/forgot`, data);
+  return authClient.post('/forgot', data);
 };
 
 export const forgotActivate = (data: ForgotActivateParams) => {
@@ -35,5 +37,5 @@ export const login = (data: SignInParams) => {
 };
 
 export const logout = () => {
-  return authClient.post(`/logout`);
+  return authClient.post('/logout');
 };

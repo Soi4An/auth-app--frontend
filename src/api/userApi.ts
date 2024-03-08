@@ -1,5 +1,5 @@
-import { ACTIVATION_EMAIL_WAY } from "../config";
-import { userClient } from "./axios";
+import { ACTIVATION_EMAIL_WAY } from '../config';
+import { userClient } from './axios';
 
 type ChangePasswordData = {
   oldPassword: string,

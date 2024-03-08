@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { AlertMessageError } from "../config";
-import { changeEmailRequest } from "../api/userApi";
-import FlowAlert from "./FlowAlert";
+import { useState } from 'react';
+import { changeEmailRequest } from '../api/userApi';
+import FlowAlert from './FlowAlert';
 
 import {
   Box,
@@ -9,9 +8,10 @@ import {
   CircularProgress,
   TextField,
   Typography,
-} from "@mui/material";
-import { validationErrors } from "../utils/validationErrors";
-import { useClearUser } from "../utils/useClearUser";
+} from '@mui/material';
+import { validationErrors } from '../utils/validationErrors';
+import { useClearUser } from '../utils/useClearUser';
+import { Status } from '../types/Status';
 
 type Params = {
   newEmail: string;
@@ -20,10 +20,9 @@ type Params = {
 };
 
 function ChangeEmailEmail({ stepIncrease, newEmail, setNewEmail }: Params) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [status, setStatus] = useState<Status | null>(null);
   const [validateErr, setValidateErr] = useState<string | null>(null);
-  const clearUser = useClearUser();
+  const clearAll = useClearUser();
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,35 +43,35 @@ function ChangeEmailEmail({ stepIncrease, newEmail, setNewEmail }: Params) {
       return setValidateErr(validate);
     }
 
-    setIsLoading(true);
-    setIsError(false);
+    setStatus(Status.Loading);
 
     changeEmailRequest({ newEmail })
-      .then(stepIncrease)
+      .then(() => {
+        stepIncrease();
+        setStatus(null);
+      })
       .catch((err) =>
-        err.response?.status === 401 ? clearUser() : setIsError(true)
-      )
-      .finally(() => setIsLoading(false));
+        err.response?.status === 401 ? clearAll() : setStatus(Status.Error)
+      );
   };
 
   return (
     <Box component="form" onSubmit={handlerSubmit} noValidate>
       <FlowAlert
-        type={"error"}
-        setClose={setIsError}
-        message={isError && !isLoading ? AlertMessageError : ""}
+        type={status === Status.Error ? status : null}
+        setClose={setStatus}
       />
 
       <Typography variant="h6" gutterBottom>
-        {"Enter a new email address"}
+        {'Enter a new email address'}
       </Typography>
 
       <TextField
         error={!!validateErr}
         required
-        id={validateErr ? "outlined-error" : "email"}
+        id={validateErr ? 'outlined-error' : 'email'}
         name="email"
-        label={validateErr ? validateErr : "New email"}
+        label={validateErr ? validateErr : 'New email'}
         variant="standard"
         fullWidth
         autoFocus
@@ -81,14 +80,18 @@ function ChangeEmailEmail({ stepIncrease, newEmail, setNewEmail }: Params) {
         onChange={(e) => handlerChange(e)}
       />
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
-          disabled={isLoading}
+          disabled={status === Status.Loading}
           variant="contained"
           type="submit"
           sx={{ mt: 3, ml: 1 }}
         >
-          {isLoading ? <CircularProgress color="primary" size={24} /> : "Next"}
+          {status === Status.Loading ? (
+            <CircularProgress color="primary" size={24} />
+          ) : (
+            'Next'
+          )}
         </Button>
       </Box>
     </Box>

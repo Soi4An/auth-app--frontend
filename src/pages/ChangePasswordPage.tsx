@@ -1,29 +1,29 @@
-import { useState } from "react";
-import { changePassword } from "../api/userApi";
-import { Link } from "react-router-dom";
-import { validateChangePasswordParams } from "../utils/validatations";
-import { ChangeParamsError, ChangeParamsSuccess } from "../config";
+import { useState } from 'react';
+import { changePassword } from '../api/userApi';
+import { Link } from 'react-router-dom';
+import { validateChangePasswordParams } from '../utils/validatations';
+import { ChangeParamsError, ChangeParamsSuccess } from '../config';
 
 import {
   ChangePasswordError,
   ChangePasswordParams,
-} from "../types/ChangePassword";
+} from '../types/ChangePassword';
 
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { CircularProgress, TextField } from "@mui/material";
-import { useClearUser } from "../utils/useClearUser";
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { CircularProgress, TextField } from '@mui/material';
+import { useClearUser } from '../utils/useClearUser';
 
-const steps = ["Enter a new name"];
-const DEF_PARAMS = { password: "", confirmation: "" };
+const steps = ['Enter a new name'];
+const DEF_PARAMS = { password: '', confirmation: '' };
 
 export default function ChangePasswordPage() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [oldPassword, setOldPassword] = useState<string>("");
+  const [oldPassword, setOldPassword] = useState<string>('');
   const [passwordDate, setPasswordDate] =
     useState<ChangePasswordParams>(DEF_PARAMS);
   const [errorValidate, setErrorValidate] =
@@ -34,7 +34,7 @@ export default function ChangePasswordPage() {
   const errPass = errorValidate?.password || null;
   const errCofig = errorValidate?.confirmation || null;
 
-  const clearUser = useClearUser();
+  const clearAll = useClearUser();
 
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -42,7 +42,7 @@ export default function ChangePasswordPage() {
     if (errorValidate) {
       setErrorValidate({ ...errorValidate, [e.target.name]: null });
     }
-    
+
     setPasswordDate((curr) => ({ ...curr, [e.target.name]: e.target.value }));
   };
 
@@ -64,9 +64,8 @@ export default function ChangePasswordPage() {
       newPassword: passwordDate.password,
       confirmation: passwordDate.confirmation,
     })
-      .then(() => {})
       .catch((err) =>
-        err.response?.status === 401 ? clearUser() : setIsError(true)
+        err.response?.status === 401 ? clearAll() : setIsError(true)
       )
       .finally(() => setIsLoading(false));
   };
@@ -116,9 +115,9 @@ export default function ChangePasswordPage() {
               <TextField
                 error={!!errPass}
                 required
-                id={errPass ? "outlined-error" : "password"}
+                id={errPass ? 'outlined-error' : 'password'}
                 name="password"
-                label={errPass ? errPass : "New password"}
+                label={errPass ? errPass : 'New password'}
                 variant="standard"
                 type="password"
                 autoComplete="new-password"
@@ -131,9 +130,9 @@ export default function ChangePasswordPage() {
               <TextField
                 error={!!errCofig}
                 required
-                id={errCofig ? "outlined-error" : "confirmation"}
+                id={errCofig ? 'outlined-error' : 'confirmation'}
                 name="confirmation"
-                label={errCofig ? errCofig : "Confirmation"}
+                label={errCofig ? errCofig : 'Confirmation'}
                 variant="standard"
                 type="password"
                 autoComplete="new-password"
@@ -142,7 +141,7 @@ export default function ChangePasswordPage() {
                 onChange={(e) => handlerChange(e)}
               />
 
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button component={Link} to="/profile" sx={{ mt: 3, ml: 1 }}>
                   Back
                 </Button>
@@ -152,7 +151,7 @@ export default function ChangePasswordPage() {
                   type="submit"
                   sx={{ mt: 3, ml: 1 }}
                 >
-                  {"Change password"}
+                  {'Change password'}
                 </Button>
               </Box>
             </Box>
@@ -161,19 +160,19 @@ export default function ChangePasswordPage() {
           {activeStep === steps.length && (
             <>
               {isLoading ? (
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                   <CircularProgress color="primary" sx={{ mt: 3 }} />
                 </Box>
               ) : (
                 <>
                   <Typography variant="h5" gutterBottom sx={{ mt: 6 }}>
-                    {isError ? "Error" : "Success"}
+                    {isError ? 'Error' : 'Success'}
                   </Typography>
                   <Typography variant="subtitle1">
-                    {isError ? ChangeParamsError : ChangeParamsSuccess("name")}
+                    {isError ? ChangeParamsError : ChangeParamsSuccess('name')}
                   </Typography>
 
-                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     {!isError && (
                       <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
                         Back
@@ -186,7 +185,7 @@ export default function ChangePasswordPage() {
                       to="/profile"
                       sx={{ mt: 3, ml: 1 }}
                     >
-                      {"Return to profile"}
+                      {'Return to profile'}
                     </Button>
                   </Box>
                 </>

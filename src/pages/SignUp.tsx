@@ -1,29 +1,30 @@
-import { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-import { AlertMessageError, AlertMessageSuccess } from "../config";
-import { validationErrors } from "../utils/validationErrors";
-import FlowAlert from "../components/FlowAlert";
-import { SignUpErrors, SignUpParams } from "../types/SignUp";
+import { validationErrors } from '../utils/validationErrors';
+import FlowAlert from '../components/FlowAlert';
+import { SignUpErrors, SignUpParams } from '../types/SignUp';
 
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { registrRequest } from "../api/authApi";
-import { CircularProgress } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import HomeIcon from '@mui/icons-material/Home';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { registrRequest } from '../api/authApi';
+import { CircularProgress } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import { Status } from '../types/Status';
 
-const DEF_SIGNUP_PARAMS = { email: "", name: "", password: "" };
+const DEF_SIGNUP_PARAMS = { email: '', name: '', password: '' };
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 function validateSingUpParams(params: SignUpParams) {
@@ -48,9 +49,8 @@ export default function SignUp() {
   const [registerDate, setRegisterData] =
     useState<SignUpParams>(DEF_SIGNUP_PARAMS);
   const [validErrors, setValidErrors] = useState<SignUpErrors | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [status, setStatus] = useState<Status | null>(null);
+  const navigate = useNavigate();
 
   const errEmail = validErrors?.email || null;
   const errName = validErrors?.name || null;
@@ -73,17 +73,14 @@ export default function SignUp() {
     setValidErrors(errors);
 
     if (!errors) {
-      setIsLoading(true);
-      setIsError(false);
-      setIsSuccess(false);
+      setStatus(Status.Loading);
 
       registrRequest(registerDate)
         .then(() => {
           setRegisterData(DEF_SIGNUP_PARAMS);
-          setIsSuccess(true);
+          setStatus(Status.Success);
         })
-        .catch((err) => setIsError(true))
-        .finally(() => setIsLoading(false));
+        .catch(() => setStatus(Status.Error));
     }
   };
 
@@ -98,32 +95,34 @@ export default function SignUp() {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+
+        <IconButton
+          color="secondary"
+          onClick={() => navigate('/')}
+          sx={{ mt: 1, position: 'absolute' }}
+        >
+          <HomeIcon />
+        </IconButton>
+
         <Box
           sx={{
             marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
           <FlowAlert
-            type={"error"}
-            setClose={setIsError}
-            message={isError && !isLoading ? AlertMessageError : ""}
+            type={status === Status.Loading ? null : status}
+            setClose={setStatus}
           />
 
-          <FlowAlert
-            type={"success"}
-            setClose={setIsSuccess}
-            message={isSuccess && !isLoading ? AlertMessageSuccess : ""}
-          />
-
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
 
           <Typography component="h1" variant="h5">
-            {"Sign up"}
+            {'Sign up'}
           </Typography>
 
           <Box
@@ -135,10 +134,12 @@ export default function SignUp() {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  disabled={isLoading || isSuccess}
+                  disabled={
+                    status === Status.Loading || status === Status.Success
+                  }
                   error={errEmail ? true : false}
-                  id={errEmail ? "outlined-error" : "email"}
-                  label={errEmail ? errEmail : "Email Address"}
+                  id={errEmail ? 'outlined-error' : 'email'}
+                  label={errEmail ? errEmail : 'Email Address'}
                   name="email"
                   value={registerDate.email}
                   onChange={(e) => onChange(e)}
@@ -151,10 +152,12 @@ export default function SignUp() {
 
               <Grid item xs={12}>
                 <TextField
-                  disabled={isLoading || isSuccess}
+                  disabled={
+                    status === Status.Loading || status === Status.Success
+                  }
                   error={errName ? true : false}
-                  id={errName ? "outlined-error" : "name"}
-                  label={errName ? errName : "Name"}
+                  id={errName ? 'outlined-error' : 'name'}
+                  label={errName ? errName : 'Name'}
                   name="name"
                   value={registerDate.name}
                   onChange={(e) => onChange(e)}
@@ -166,10 +169,12 @@ export default function SignUp() {
 
               <Grid item xs={12}>
                 <TextField
-                  disabled={isLoading || isSuccess}
+                  disabled={
+                    status === Status.Loading || status === Status.Success
+                  }
                   error={errPassword ? true : false}
-                  id={errPassword ? "outlined-error" : "password"}
-                  label={errPassword ? errPassword : "Password"}
+                  id={errPassword ? 'outlined-error' : 'password'}
+                  label={errPassword ? errPassword : 'Password'}
                   name="password"
                   type="password"
                   value={registerDate.password}
@@ -182,39 +187,43 @@ export default function SignUp() {
             </Grid>
 
             <Button
-              disabled={isLoading || isSuccess}
-              color={isSuccess ? "success" : "primary"}
+              disabled={status === Status.Loading || status === Status.Success}
+              color="primary"
               type="submit"
               fullWidth
               variant="contained"
               size="large"
               sx={{ mt: 3, mb: 2 }}
             >
-              {isLoading && <CircularProgress color="primary" size={26} />}
-              {isSuccess && "Check your email"}
-              {!isLoading && !isSuccess && "Sign Up"}
+              {status === Status.Success && 'Check your email'}
+              {(status === Status.Error || status === null) && 'Sign Up'}
+              {status === Status.Loading && (
+                <CircularProgress color="primary" size={26} />
+              )}
             </Button>
 
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link
                   variant="body2"
-                  component={isLoading ? Typography : RouterLink}
+                  component={
+                    status === Status.Loading ? Typography : RouterLink
+                  }
                   to="/login"
                 >
-                  {"Already have an account? Sign in"}
+                  {'Already have an account? Sign in'}
                 </Link>
               </Grid>
             </Grid>
           </Box>
 
           <Typography component="h1" variant="h6" sx={{ my: 2 }}>
-            {"or"}
+            {'or'}
           </Typography>
 
           <Button
             onClick={googleAuth}
-            disabled={isLoading || isSuccess}
+            disabled={status === Status.Loading || status === Status.Success}
             color="info"
             fullWidth
             variant="contained"
@@ -222,7 +231,7 @@ export default function SignUp() {
             sx={{ mt: 3, mb: 2 }}
           >
             <GoogleIcon sx={{ mr: 2 }} />
-            {"Sing up with Google"}
+            {'Sing up with Google'}
           </Button>
         </Box>
       </Container>

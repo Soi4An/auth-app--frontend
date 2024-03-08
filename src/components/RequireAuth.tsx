@@ -1,39 +1,71 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../utils/redux/store";
-import { clearUser } from "../utils/redux/userSlice";
-import AlertWithLink from "../pages/AlertWithLink";
-import { checkRefresh } from "../api/authApi";
-import { AlertTypes } from "../types/AlertTypes";
-import { Box, CircularProgress } from "@mui/material";
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../utils/redux/store';
+import { setUserAndMethod } from '../utils/redux/userSlice';
+import AlertWithLink from '../pages/AlertWithLink';
+import { AlertTypes } from '../types/AlertTypes';
+import { Box, CircularProgress } from '@mui/material';
+import { googleGetUser } from '../api/googleApi';
+import { LoginMethod } from '../types/LoginMethod';
 
 type Props = {
   children?: ReactNode;
 };
 
 export const RequireAuth: React.FC<Props> = ({ children }) => {
-  const [isValidRefresh, setIsValidRefresh] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
+  const { user, method } = useAppSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const loginMethod = queryParams.get('loginMethod');
 
-  useEffect(() => {
+  // implement url without params after google enter
+  // const getRedirectLocation = () => {
+  //   const path = location.pathname;
+
+  //   console.log(loginMethod);
+
+  //   if (loginMethod) {
+  //     const paramsIndex = path.indexOf('?');
+
+  //     return {
+  //       ...location,
+  //       pathname: path.slice(0, paramsIndex),
+  //     };
+  //   }
+
+  //   return location;
+  // };
+
+  const getGoogleUser = useCallback(() => {
     setIsLoading(true);
     setIsError(false);
 
-    checkRefresh()
-      .then((res) => setIsValidRefresh(res.data.isValid))
-      .catch((err) => setIsError(true))
+    googleGetUser()
+      .then((res) =>
+        dispatch(
+          setUserAndMethod({
+            user: res.data.user,
+            method: LoginMethod.Google,
+          })
+        )
+      )
+      .catch(() => setIsError(true))
       .finally(() => setIsLoading(false));
-  // }, []);
-  }, [location?.pathname]);
+  }, [user]);
+
+  useEffect(() => {
+    if (!user && !method && loginMethod === LoginMethod.Google) {
+      getGoogleUser();
+    }
+  }, []);
 
   if (isLoading) {
     return (
-      <Box sx={{ marginTop: 8, display: "flex", justifyContent: "center" }}>
+      <Box sx={{ marginTop: 8, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress color="primary" size={50} />
       </Box>
     );
@@ -50,12 +82,10 @@ export const RequireAuth: React.FC<Props> = ({ children }) => {
     );
   }
 
-  if (!user || !isValidRefresh) {
-    if (user) {
-      dispatch(clearUser());
-    }
-
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!user && !method && !loginMethod) {
+    return (
+      <Navigate to="/login" state={{ from: location }} replace />
+    );
   }
 
   return <>{children || <Outlet />}</>;
